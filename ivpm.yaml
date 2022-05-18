@@ -1,0 +1,22 @@
+
+package:
+  name: uvmf-yaml-utils
+
+  dep-sets:
+  - name: default
+    deps: 
+    - name: jinja2
+      src: pypi
+    - name: pyyaml
+      src: pypi
+    - name: voluptuous
+      src: pypi
+  - name: default-def
+    deps: 
+    - name: jinja2
+      src: pypi
+    - name: pyyaml
+      src: pypi
+    - name: voluptuous
+      src: pypi
+
