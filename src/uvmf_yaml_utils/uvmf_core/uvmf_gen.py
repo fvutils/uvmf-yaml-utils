@@ -47,6 +47,7 @@ from fnmatch import fnmatch
 from shutil import copyfile
 
 from uvmf_version import version
+import traceback
 
 __version__ = version
 
@@ -75,9 +76,10 @@ if ( (int(s[0]) < 2) | ( (int(s[0]) == 2) & (int(s[1]) < 8))):
 class FileSystemFilterLoader(jinja2.FileSystemLoader):
   def __init__(self,searchpath,glob='*',encoding='utf-8',followlinks=False):
     super(FileSystemFilterLoader,self).__init__(searchpath,encoding,followlinks)
-    if isinstance(glob,string_types):
-      glob = [glob]
-    self.glob = glob
+    # MSB:
+#    if isinstance(glob,string_types):
+#      glob = [glob]
+    self.glob = [glob]
 
   def list_templates(self):
     filtered_found = []
@@ -246,8 +248,10 @@ class BaseGeneratorClass(BaseElementClass):
     templateVars.update(ExtraTemplateVars)
     ## Do any necessary search/replace operations within the fname variable
     try:
+      print("template: %s" % str(template))
       fname = template.module.fname
     except(AttributeError):
+      traceback.print_exc()
       raise UserError("Template '"+template_str+"' has no fname attribute defined, exiting")
     for key in templateVars:
       if type(templateVars[key]) is str:
@@ -401,6 +405,7 @@ class BaseGeneratorClass(BaseElementClass):
       pass
     paths = []
     for p in extra_paths+[template_path]:
+      print("template_ext_dir: %s" % self.template_ext_dir)
       paths.append(os.path.join(p,self.template_ext_dir))
       paths.append(os.path.join(p,'base_templates'))
     templateLoader = FileSystemFilterLoader(searchpath=paths,glob='*.TMPL') 
@@ -416,6 +421,7 @@ class BaseGeneratorClass(BaseElementClass):
         pass
     else:
       templates = [desired_template]
+    print("templates: %s" % str(templates))
     for template_str in templates:
       self.runTemplate(template_str)
     if (archive_yaml == True):
